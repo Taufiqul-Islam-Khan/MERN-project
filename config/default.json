@@ -1,4 +1,3 @@
 {
-    "mongoURI":"mongodb+srv://opu:<opu>@devconnector.tppio.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-
+    "mongoURI":"mongodb+srv://opu:opu@devconnector.tppio.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 }
