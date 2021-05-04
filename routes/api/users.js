@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const {check,validationResult} = require('express-validator/check');
-const gravatar = require('gravatar')
-const bcrypt = require('bcryptjs')
+const gravatar = require('gravatar');
+const bcrypt = require('bcryptjs');
+const jwt= require('jsonwebtoken');
+const config= require('config');
 const User =require('../../models/User');
 
 //@route     POST api/user
@@ -12,11 +14,7 @@ const User =require('../../models/User');
 router.post('/',[
     check('name','Name is Required').not().isEmpty(),
     check('email','Please include a valid email').isEmail(),
-    check(
-        'password',
-        'Please enter a password with 6 or more charecter'
-    ).isLength({min:6})
-
+    check('password','Please enter a password with 6 or more charecter').isLength({min:6})
 ],
 async (req,res)=>{
     const errors = validationResult(req);
@@ -28,7 +26,7 @@ async (req,res)=>{
     try{
      //see if user exits
      let user =await User.findOne({email});
-
+     
      if (user){
         return res.status(400).json({errors : [{msg: 'User already exists'}]});
      }
@@ -51,16 +49,26 @@ async (req,res)=>{
     )
 
     //encrypt password
-
     const salt = await bcrypt.genSalt(10);
     user.password= await bcrypt.hash(password,salt);
 
     await user.save();
 
     //return jsonwebtoken
+    const payload ={
+        user:{
+            id: user.id
+        }
+    }
 
-
-    res.send('User Registered');
+    jwt.sign(
+        payload,
+        config.get('jwtSecret'),
+        {expiresIn: 36000}, // before deploy change it to 360
+        (err,token)=>{
+            if (err)throw err;
+            res.json({token});
+        });
 
     }catch(err){
         console.error(err.message);
