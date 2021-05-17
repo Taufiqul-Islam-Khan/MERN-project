@@ -1,4 +1,6 @@
 {
     "mongoURI":"mongodb+srv://opu:opu@devconnector.tppio.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-    "jwtSecret": "MySecretToken"
+    "jwtSecret": "MySecretToken",
+    "githubClientId":"ec170c87fd8fc8890ff1",
+    "githubSecret" :"4856221aa7c80460a24ff37b9a845f6bc02746b8"
 }
