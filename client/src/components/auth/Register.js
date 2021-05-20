@@ -1,8 +1,11 @@
 import React, { Fragment, useState } from 'react';
-// import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { setAlert } from '../../actions/alert';
+import { register } from '../../actions/auth';
+import { Link, Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-export const Register = () => {
+export const Register = ({ setAlert, register, isAuthenticated }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,30 +19,15 @@ export const Register = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (password !== password2) {
-      console.log('password not matched');
+      setAlert('password not matched', 'danger');
     } else {
-      console.log('password matched');
-      //   const newUser = {
-      //     name,
-      //     email,
-      //     password,
-      //     password2,
-      //   };
-
-      //   try {
-      //     const config = {
-      //       headers: {
-      //         'Content-Type': 'application/json',
-      //       },
-      //     };
-      //     const body = JSON.stringify(newUser);
-      //     const res = await axios.post('/api/users', body, config);
-      //     console.log(res.data);
-      //   } catch (err) {
-      //     console.error(err.response.data);
-      //   }
+      register({ name, email, password });
     }
   };
+
+  if (isAuthenticated) {
+    return <Redirect to='/dashboard' />;
+  }
 
   return (
     <Fragment>
@@ -55,7 +43,7 @@ export const Register = () => {
             name='name'
             value={name}
             onChange={(e) => onChange(e)}
-            required
+            // required
           />
         </div>
         <div className='form-group'>
@@ -78,7 +66,7 @@ export const Register = () => {
             name='password'
             value={password}
             onChange={(e) => onChange(e)}
-            minLength='6'
+            // minLength='6'
           />
         </div>
         <div className='form-group'>
@@ -88,7 +76,7 @@ export const Register = () => {
             name='password2'
             value={password2}
             onChange={(e) => onChange(e)}
-            minLength='6'
+            // minLength='6'
           />
         </div>
         <input type='submit' className='btn btn-primary' value='Register' />
@@ -99,4 +87,13 @@ export const Register = () => {
     </Fragment>
   );
 };
-export default Register;
+
+Register.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+  register: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool,
+};
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+export default connect(mapStateToProps, { setAlert, register })(Register);
